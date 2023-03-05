@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "06.AddingANewAddressAndUpdatingEmployee", "06.AddingANewAddressAndUpdatingEmployee\06.AddingANewAddressAndUpdatingEmployee.csproj", "{2196197A-85CF-4F7F-9D6A-F733008C83AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "07.EmployeesAndProjects", "07.EmployeesAndProjects\07.EmployeesAndProjects.csproj", "{816DF2DC-7BB5-4132-A26D-B23FD6D1129C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2196197A-85CF-4F7F-9D6A-F733008C83AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2196197A-85CF-4F7F-9D6A-F733008C83AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2196197A-85CF-4F7F-9D6A-F733008C83AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2196197A-85CF-4F7F-9D6A-F733008C83AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{816DF2DC-7BB5-4132-A26D-B23FD6D1129C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{816DF2DC-7BB5-4132-A26D-B23FD6D1129C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{816DF2DC-7BB5-4132-A26D-B23FD6D1129C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{816DF2DC-7BB5-4132-A26D-B23FD6D1129C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {38231B25-D7E7-4CB9-B6AF-7159B91FEBE1}
+		SolutionGuid = {B76F2AB1-7D64-4A44-B806-741DE3429845}
 	EndGlobalSection
 EndGlobal
