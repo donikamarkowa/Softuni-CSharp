@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "12.IncreaseSalaries", "12.IncreaseSalaries\12.IncreaseSalaries.csproj", "{B3945B88-CCA5-442C-A31C-BD055D726771}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "13.FindEmployeesByFirstNameStartingWithSa", "13.FindEmployeesByFirstNameStartingWithSa\13.FindEmployeesByFirstNameStartingWithSa.csproj", "{C05DAEA1-7AB7-416D-BE92-D95FBFA69D71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B3945B88-CCA5-442C-A31C-BD055D726771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3945B88-CCA5-442C-A31C-BD055D726771}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3945B88-CCA5-442C-A31C-BD055D726771}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3945B88-CCA5-442C-A31C-BD055D726771}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C05DAEA1-7AB7-416D-BE92-D95FBFA69D71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C05DAEA1-7AB7-416D-BE92-D95FBFA69D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C05DAEA1-7AB7-416D-BE92-D95FBFA69D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C05DAEA1-7AB7-416D-BE92-D95FBFA69D71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2B292800-8851-4223-97C8-A42F94D92554}
+		SolutionGuid = {CA0EFA3A-56BA-4AD5-B996-79C0F750804F}
 	EndGlobalSection
 EndGlobal
