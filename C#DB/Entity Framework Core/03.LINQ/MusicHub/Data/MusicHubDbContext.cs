@@ -13,12 +13,12 @@
             : base(options)
         {
         }
+        DbSet<Song> Songs { get; set; } = null!;
         DbSet<Album> Albums { get; set; } = null!;
         DbSet<Performer> Performsers { get; set; } = null!;
         DbSet<Producer> Producers { get; set; } = null!;
-        DbSet<Song> Songs { get; set; } = null!;
-        DbSet<SongPerformer> SongPerformers { get; set; } = null!;
         DbSet<Writer> Writers { get; set; } = null!;
+        DbSet<SongPerformer> SongPerformers { get; set; } = null!;
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

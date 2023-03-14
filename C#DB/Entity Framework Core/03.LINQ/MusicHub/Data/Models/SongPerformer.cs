@@ -13,7 +13,7 @@ namespace MusicHub.Data.Models
         [ForeignKey(nameof(Performer))] 
         public int PerformerId { get; set; }
 
-        public Performer Performer { get; set; } = null!;
+        public virtual Performer Performer { get; set; } = null!;
 
 
     }
