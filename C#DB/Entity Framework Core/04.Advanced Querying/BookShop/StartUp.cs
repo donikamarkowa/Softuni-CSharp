@@ -55,8 +55,10 @@
             //string result = GetTotalProfitByCategory(db);
             //Console.WriteLine(result);
 
-            string result = GetMostRecentBooks(db);
-            Console.WriteLine(result);
+            //string result = GetMostRecentBooks(db);
+            //Console.WriteLine(result);
+
+            IncreasePrices(db);
 
         }
 
@@ -299,6 +301,22 @@
             }
 
             return sb.ToString().TrimEnd();
+        }
+
+        //Problem 15
+        public static void IncreasePrices(BookShopContext context)
+        {
+            var booksReleasedBefore2010 = context
+                .Books
+                .Where(b => b.ReleaseDate.Value.Year < 2010 )
+                .ToArray();
+
+            foreach (var b in booksReleasedBefore2010)
+            {
+                b.Price += 5;
+            }
+
+            context.SaveChanges();
         }
     }
 }
