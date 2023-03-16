@@ -3,6 +3,7 @@
     using BookShop.Models.Enums;
     using Data;
     using Initializer;
+    using Microsoft.EntityFrameworkCore.Metadata.Conventions;
     using System.ComponentModel.DataAnnotations;
     using System.Globalization;
     using System.Text;
@@ -36,8 +37,12 @@
             //string result = GetBooksReleasedBefore(db, date);
             //Console.WriteLine(result);
 
-            string str = Console.ReadLine();
-            string result = GetBookTitlesContaining(db, str);
+            //string str = Console.ReadLine();
+            //string result = GetBookTitlesContaining(db, str);
+            //Console.WriteLine(result);
+
+            string input = Console.ReadLine();
+            string result = GetBooksByAuthor(db, input);
             Console.WriteLine(result);
 
         }
@@ -183,6 +188,19 @@
                 .ToArray();
 
             return string.Join(Environment.NewLine, bookTitles);
+        }
+
+        //Probelm 10
+        public static string GetBooksByAuthor(BookShopContext context, string input)
+        {
+            var booksWithAuthors = context
+                .Books
+                .Where(b => b.Author.LastName.ToLower().StartsWith(input.ToLower()))
+                .OrderBy(b => b.BookId)
+                .Select(b => $"{b.Title} ({b.Author.FirstName} {b.Author.LastName})")
+                .ToArray();
+
+            return string.Join(Environment.NewLine, booksWithAuthors);
         }
     }
 }
