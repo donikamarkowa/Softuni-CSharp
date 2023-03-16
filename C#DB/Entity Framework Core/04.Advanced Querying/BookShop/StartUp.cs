@@ -13,7 +13,7 @@
         public static void Main()
         {
             using var db = new BookShopContext();
-            //DbInitializer.ResetDatabase(db);
+            DbInitializer.ResetDatabase(db);
 
             //string ageRestriction = Console.ReadLine();
             //string result = GetBooksByAgeRestriction(db, ageRestriction);
@@ -60,8 +60,8 @@
 
             //IncreasePrices(db);
 
-            int result = RemoveBooks(db);
-            Console.WriteLine(result);
+            //int result = RemoveBooks(db);
+            //Console.WriteLine(result);
 
         }
 
