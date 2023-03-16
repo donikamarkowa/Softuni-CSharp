@@ -41,8 +41,12 @@
             //string result = GetBookTitlesContaining(db, str);
             //Console.WriteLine(result);
 
-            string input = Console.ReadLine();
-            string result = GetBooksByAuthor(db, input);
+            //string input = Console.ReadLine();
+            //string result = GetBooksByAuthor(db, input);
+            //Console.WriteLine(result);
+
+            int number = int.Parse(Console.ReadLine()); 
+            int result = CountBooks(db, number);    
             Console.WriteLine(result);
 
         }
@@ -190,7 +194,7 @@
             return string.Join(Environment.NewLine, bookTitles);
         }
 
-        //Probelm 10
+        //Problem 10
         public static string GetBooksByAuthor(BookShopContext context, string input)
         {
             var booksWithAuthors = context
@@ -201,6 +205,17 @@
                 .ToArray();
 
             return string.Join(Environment.NewLine, booksWithAuthors);
+        }
+
+        //Problem 11
+        public static int CountBooks(BookShopContext context, int lengthCheck)
+        {
+            var booksTitles = context
+                .Books
+                .Where(b => b.Title.Length > lengthCheck)
+                .ToArray();
+
+            return booksTitles.Count();
         }
     }
 }
