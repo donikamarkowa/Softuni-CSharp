@@ -4,6 +4,7 @@
     using Data;
     using Initializer;
     using System.ComponentModel.DataAnnotations;
+    using System.Globalization;
     using System.Text;
 
     public class StartUp
@@ -27,8 +28,12 @@
             //string result = GetBooksNotReleasedIn(db, year);
             //Console.WriteLine(result);
 
-            string categories = Console.ReadLine();
-            string result = GetBooksByCategory(db, categories);
+            //string categories = Console.ReadLine();
+            //string result = GetBooksByCategory(db, categories);
+            //Console.WriteLine(result);
+
+            string date = Console.ReadLine();
+            string result = GetBooksReleasedBefore(db, date);
             Console.WriteLine(result);
         }
 
@@ -118,6 +123,33 @@
                 .ToArray();
 
             return string.Join(Environment.NewLine, bookTitles);
+        }
+
+        //Problem 07
+        public static string GetBooksReleasedBefore(BookShopContext context, string date)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var parsedDate = DateTime.ParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+            var bookReleasedBeforeDate = context
+                .Books
+                .Where(b => b.ReleaseDate < parsedDate)
+                .OrderByDescending(b => b.ReleaseDate)
+                .Select(b => new
+                {
+                    b.Title,
+                    b.EditionType,
+                    b.Price
+                })
+                .ToArray();
+
+            foreach (var b in bookReleasedBeforeDate)
+            {
+                sb.AppendLine($"{b.Title} - {b.EditionType} - ${b.Price:f2}");
+            }
+
+            return sb.ToString().TrimEnd();
         }
     }
 }
