@@ -52,7 +52,10 @@
             //string result = CountCopiesByAuthor(db);
             //Console.WriteLine(result);
 
-            string result = GetTotalProfitByCategory(db);
+            //string result = GetTotalProfitByCategory(db);
+            //Console.WriteLine(result);
+
+            string result = GetMostRecentBooks(db);
             Console.WriteLine(result);
 
         }
@@ -255,6 +258,44 @@
             foreach (var c in totalProfit)
             {
                 sb.AppendLine($"{c.CategoryName} ${c.TotalProfit:f2}");
+            }
+
+            return sb.ToString().TrimEnd();
+        }
+
+        //Problem 14
+        public static string GetMostRecentBooks(BookShopContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var recentBooks = context
+                .Categories
+                .OrderBy(c => c.Name)
+                .Select(c => new
+                {
+                    CategoryName = c.Name,
+                    MostRecentBooks = context
+                            .BooksCategories
+                            .Where(bc => bc.Category == c)
+                            .OrderByDescending(bc => bc.Book.ReleaseDate)
+                            .Select(bc => new
+                            {
+                                BookName = bc.Book.Title,
+                                YearPublished = bc.Book.ReleaseDate.Value.Year
+                            })
+                            .Take(3)
+                            .ToArray()
+                })
+                .ToArray();
+
+            foreach (var c in recentBooks)
+            {
+                sb.AppendLine($"--{c.CategoryName}");
+
+                foreach (var b in c.MostRecentBooks)
+                {
+                    sb.AppendLine($"{b.BookName} ({b.YearPublished})");
+                }
             }
 
             return sb.ToString().TrimEnd();
