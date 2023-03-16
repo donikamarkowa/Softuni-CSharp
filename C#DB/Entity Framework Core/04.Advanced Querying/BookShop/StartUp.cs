@@ -32,9 +32,9 @@
             //string result = GetBooksByCategory(db, categories);
             //Console.WriteLine(result);
 
-            string date = Console.ReadLine();
-            string result = GetBooksReleasedBefore(db, date);
-            Console.WriteLine(result);
+            //string date = Console.ReadLine();
+            //string result = GetBooksReleasedBefore(db, date);
+            //Console.WriteLine(result);
         }
 
         //Problem 02
