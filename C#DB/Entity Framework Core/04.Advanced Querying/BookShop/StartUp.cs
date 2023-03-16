@@ -20,7 +20,15 @@
             //string result = GetGoldenBooks(db); 
             //Console.WriteLine(result);
 
-            string result = GetBooksByPrice(db);
+            //string result = GetBooksByPrice(db);
+            //Console.WriteLine(result);
+
+            //int year = int.Parse(Console.ReadLine());
+            //string result = GetBooksNotReleasedIn(db, year);
+            //Console.WriteLine(result);
+
+            string categories = Console.ReadLine();
+            string result = GetBooksByCategory(db, categories);
             Console.WriteLine(result);
         }
 
@@ -79,6 +87,37 @@
             }
 
             return sb.ToString().TrimEnd();
+        }
+
+        //Problem 05
+        public static string GetBooksNotReleasedIn(BookShopContext context, int year)
+        {
+            var notReleasedBooks = context
+                .Books
+                .Where(b => b.ReleaseDate.Value.Year != year)
+                .OrderBy(b => b.BookId)
+                .Select(b => b.Title)
+                .ToArray();
+
+            return string.Join(Environment.NewLine, notReleasedBooks);
+        }
+
+        //Problem 06
+        public static string GetBooksByCategory(BookShopContext context, string input)
+        {
+            string[] categories = input
+                .ToLower()
+                .Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                .ToArray();
+
+            var bookTitles = context
+                .Books
+                .Where(b => b.BookCategories.Any(c => categories.Contains(c.Category.Name.ToLower())))
+                .Select(b => b.Title)
+                .OrderBy(b => b)
+                .ToArray();
+
+            return string.Join(Environment.NewLine, bookTitles);
         }
     }
 }
