@@ -35,6 +35,10 @@
             //string date = Console.ReadLine();
             //string result = GetBooksReleasedBefore(db, date);
             //Console.WriteLine(result);
+
+            string letter = Console.ReadLine();
+            string result = GetAuthorNamesEndingIn(db, letter);
+            Console.WriteLine(result);
         }
 
         //Problem 02
@@ -150,6 +154,21 @@
             }
 
             return sb.ToString().TrimEnd();
+        }
+
+        //Problem 08
+        public static string GetAuthorNamesEndingIn(BookShopContext context, string input)
+        {
+            var authorsNames = context
+                .Authors
+                .Where(a => a.FirstName.EndsWith(input))
+                .Select(a => $"{a.FirstName} {a.LastName}")
+                .ToArray()
+                .OrderBy(a => a)
+                .ToArray();
+
+            return string.Join(Environment.NewLine, authorsNames);
+
         }
     }
 }
