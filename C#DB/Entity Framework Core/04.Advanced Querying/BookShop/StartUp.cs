@@ -4,6 +4,7 @@
     using Data;
     using Initializer;
     using System.ComponentModel.DataAnnotations;
+    using System.Text;
 
     public class StartUp
     {
@@ -16,7 +17,10 @@
             //string result = GetBooksByAgeRestriction(db, ageRestriction);
             //Console.WriteLine(result);
 
-            string result = GetGoldenBooks(db); 
+            //string result = GetGoldenBooks(db); 
+            //Console.WriteLine(result);
+
+            string result = GetBooksByPrice(db);
             Console.WriteLine(result);
         }
 
@@ -51,6 +55,30 @@
                 .ToArray();
 
             return string.Join(Environment.NewLine, bookTitles);
+        }
+
+        //Problem 04
+        public static string GetBooksByPrice(BookShopContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var bookTitlesAndPrices = context
+                .Books
+                .Where(b => b.Price > 40)
+                .Select(b => new
+                {
+                    b.Title,
+                    b.Price
+                })
+                .OrderByDescending(b => b.Price)
+                .ToArray();
+
+            foreach (var b in bookTitlesAndPrices)
+            {
+                sb.AppendLine($"{b.Title} - ${b.Price:f2}");
+            }
+
+            return sb.ToString().TrimEnd();
         }
     }
 }
