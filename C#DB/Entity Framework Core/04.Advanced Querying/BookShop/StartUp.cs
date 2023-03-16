@@ -58,7 +58,10 @@
             //string result = GetMostRecentBooks(db);
             //Console.WriteLine(result);
 
-            IncreasePrices(db);
+            //IncreasePrices(db);
+
+            int result = RemoveBooks(db);
+            Console.WriteLine(result);
 
         }
 
@@ -317,6 +320,22 @@
             }
 
             context.SaveChanges();
+        }
+
+        //Problem 16
+        public static int RemoveBooks(BookShopContext context)
+        {
+            var booksToRemove = context
+                .Books
+                .Where(b => b.Copies < 4200)
+                .ToArray();
+
+            int countOfBooks = booksToRemove.Count();
+
+            context.Books.RemoveRange(booksToRemove);
+            context.SaveChanges();
+
+            return countOfBooks;
         }
     }
 }
