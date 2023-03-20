@@ -13,11 +13,17 @@ namespace ProductShop
         {
             ProductShopContext dbContext = new ProductShopContext();
 
-            string inputJson = File.ReadAllText(@"../../../Datasets/users.json");
-            string result = ImportUsers(dbContext, inputJson);
+            //string inputJson = File.ReadAllText(@"../../../Datasets/users.json");
+            //string result = ImportUsers(dbContext, inputJson);
+            //Console.WriteLine(result);
+
+            string inputJson = File.ReadAllText(@"../../../Datasets/products.json");
+            string result = ImportProducts(dbContext, inputJson);
             Console.WriteLine(result);
 
         }
+
+        //Problem 01
         public static string ImportUsers(ProductShopContext context, string inputJson)
         {
             IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
@@ -25,10 +31,10 @@ namespace ProductShop
                 cfg.AddProfile<ProductShopProfile>();
             }));
 
-            ImportUserDto[] userDtos = 
+            ImportUserDto[] userDtos =
                 JsonConvert.DeserializeObject<ImportUserDto[]>(inputJson);
 
-            ICollection<User> users = new HashSet<User>();  
+            ICollection<User> users = new HashSet<User>();
 
             foreach (var userDto in userDtos)
             {
@@ -42,6 +48,25 @@ namespace ProductShop
 
             return $"Successfully imported {users.Count}";
         }
+
+        //Problem 02
+        public static string ImportProducts(ProductShopContext context, string inputJson)
+        {
+            IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<ProductShopProfile>();
+            }));
+
+            var productsDto = JsonConvert.DeserializeObject<ImportProductDto[]>(inputJson);
+
+            Product[] products = mapper.Map<Product[]>(productsDto);
+
+            context.Products.AddRange(products);
+            context.SaveChanges();
+
+            return $"Successfully imported {products.Count()}";
+        }
+
 
     }
 }
