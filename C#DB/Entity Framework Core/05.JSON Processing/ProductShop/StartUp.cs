@@ -15,14 +15,17 @@ namespace ProductShop
 
             //string inputJson = File.ReadAllText(@"../../../Datasets/users.json");
             //string result = ImportUsers(dbContext, inputJson);
-            //Console.WriteLine(result);
 
             //string inputJson = File.ReadAllText(@"../../../Datasets/products.json");
             //string result = ImportProducts(dbContext, inputJson);
-            //Console.WriteLine(result);
 
-            string inputJson = File.ReadAllText(@"../../../Datasets/categories.json");
-            string result = ImportCategories(dbContext, inputJson);
+            //string inputJson = File.ReadAllText(@"../../../Datasets/categories.json");
+            //string result = ImportCategories(dbContext, inputJson);
+
+            //string inputJson = File.ReadAllText(@"../../../Datasets/categories-products.json");
+            //string result = ImportCategoryProducts(dbContext, inputJson);
+
+            string result = GetProductsInRange(dbContext);
             Console.WriteLine(result);
 
         }
@@ -100,6 +103,46 @@ namespace ProductShop
             return $"Successfully imported {categories.Count}";
         }
 
+        //Problem 04
+        public static string ImportCategoryProducts(ProductShopContext context, string inputJson)
+        {
+            Mapper mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<ProductShopProfile>();
+            }));
 
+            var categoriesProductsDto = JsonConvert.DeserializeObject<ImportCategoryProductDto[]>(inputJson);
+
+            ICollection<CategoryProduct> categoryProducts = new HashSet<CategoryProduct>();
+
+            foreach (var cp in categoriesProductsDto)
+            {
+                CategoryProduct categoryProduct = mapper.Map<CategoryProduct>(cp);
+                categoryProducts.Add(categoryProduct);
+            }
+            context.CategoriesProducts.AddRange(categoryProducts);
+            context.SaveChanges();
+
+            return $"Successfully imported {categoryProducts.Count}"; ;
+        }
+
+        //Problem 05
+        public static string GetProductsInRange(ProductShopContext context)
+        {
+            var products = context
+                .Products
+                .Where(p => p.Price >= 500 && p.Price <= 1000)
+                .OrderBy(p => p.Price)
+                .Select(p => new
+                {
+                    name = p.Name,
+                    price = p.Price,
+                    seller = p.Seller.FirstName + " " + p.Seller.LastName
+                })
+                .AsNoTracking()
+                .ToArray();
+
+            return JsonConvert.SerializeObject(products, Formatting.Indented);
+        }
     }
 }
