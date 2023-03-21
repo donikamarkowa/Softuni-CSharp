@@ -14,6 +14,9 @@ namespace ProductShop
             //Product
             this.CreateMap<ImportProductDto, Product>();
 
+            //Category
+            this.CreateMap<ImportCategoryDto, Category>();
+
         }
     }
 }
