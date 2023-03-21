@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using ProductShop.Data;
 using ProductShop.DTOs.Import;
 using ProductShop.Models;
+using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace ProductShop
 {
@@ -25,7 +27,9 @@ namespace ProductShop
             //string inputJson = File.ReadAllText(@"../../../Datasets/categories-products.json");
             //string result = ImportCategoryProducts(dbContext, inputJson);
 
-            string result = GetProductsInRange(dbContext);
+            //string result = GetProductsInRange(dbContext);
+
+            string result = GetSoldProducts(dbContext);
             Console.WriteLine(result);
 
         }
@@ -143,6 +147,35 @@ namespace ProductShop
                 .ToArray();
 
             return JsonConvert.SerializeObject(products, Formatting.Indented);
+        }
+
+        //Problem 06
+        public static string GetSoldProducts(ProductShopContext context)
+        {
+            var users = context
+                .Users
+                .Where(u => u.ProductsSold.Any(p => p.BuyerId != null))
+                .OrderBy(u => u.LastName)
+                .ThenBy(u => u.FirstName)
+                .Select(u => new
+                {
+                    firstName = u.FirstName,
+                    lastName = u.LastName,
+                    soldProducts = u.ProductsSold
+                    .Where(sp => sp.BuyerId != null)
+                    .Select(sp => new
+                    {
+                        name = sp.Name,
+                        price = sp.Price,
+                        buyerFirstName = sp.Buyer.FirstName,
+                        buyerLastName = sp.Buyer.LastName
+                    })
+                    .ToArray()
+                })
+                .AsNoTracking()
+                .ToArray();
+
+            return JsonConvert.SerializeObject(users, Formatting.Indented);
         }
     }
 }
