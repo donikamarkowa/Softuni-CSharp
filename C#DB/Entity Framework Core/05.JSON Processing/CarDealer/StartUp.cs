@@ -12,8 +12,11 @@ namespace CarDealer
         {
             CarDealerContext dbContext = new CarDealerContext();
 
-            string inputJson = File.ReadAllText(@"../../../Datasets/suppliers.json");
-            string result = ImportSuppliers(dbContext, inputJson);
+            //string inputJson = File.ReadAllText(@"../../../Datasets/suppliers.json");
+            //string result = ImportSuppliers(dbContext, inputJson);
+
+            string inputJson = File.ReadAllText(@"../../../Datasets/parts.json");
+            string result = ImportParts(dbContext, inputJson);
             Console.WriteLine(result);
         }
 
@@ -32,6 +35,34 @@ namespace CarDealer
             context.SaveChanges();
 
             return $"Successfully imported {suppliers.Count}."; 
+        }
+
+        //Problem 10
+        public static string ImportParts(CarDealerContext context, string inputJson)
+        {
+            IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<CarDealerProfile>();
+            }));
+
+            var partsDto = JsonConvert.DeserializeObject<ImportPartDto[]>(inputJson);
+
+            ICollection<Part> parts = new HashSet<Part>();
+
+            foreach (var partDto in partsDto)
+            {
+                if(!context.Suppliers.Any(s => s.Id == partDto.SupplierId))
+                {
+                    continue;
+                }
+                Part part = mapper.Map<Part>(partDto);
+                parts.Add(part);
+            }
+
+            context.Parts.AddRange(parts);
+            context.SaveChanges();
+
+            return $"Successfully imported {parts.Count}.";
         }
     }
 }
