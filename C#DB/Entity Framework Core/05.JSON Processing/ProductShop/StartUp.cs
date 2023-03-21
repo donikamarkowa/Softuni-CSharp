@@ -31,7 +31,9 @@ namespace ProductShop
 
             //string result = GetSoldProducts(dbContext);
 
-            string result = GetCategoriesByProductsCount(dbContext);
+            //string result = GetCategoriesByProductsCount(dbContext);
+
+            string result = GetUsersWithProducts(dbContext);
             Console.WriteLine(result);
 
         }
@@ -198,5 +200,45 @@ namespace ProductShop
 
             return JsonConvert.SerializeObject (categories, Formatting.Indented);
         }
+
+        //Problem 08
+        public static string GetUsersWithProducts(ProductShopContext context)
+        {
+            var usersWithProducts = context
+                .Users
+                .Where(u => u.ProductsSold.Any(p => p.Buyer != null))
+                .Select(u => new
+                {
+                    lastName = u.LastName,
+                    age = u.Age,
+                    soldProducts = new
+                    {
+                        count = u.ProductsSold
+                        .Count(p => p.Buyer != null),
+                        products = u.ProductsSold
+                        .Where(p => p.Buyer != null)
+                        .Select(p => new
+                        {
+                            name = p.Name,
+                            price = p.Price
+                        })
+                        .ToArray()
+                    }
+
+                })
+                .OrderByDescending(u => u.soldProducts.count)
+                .AsNoTracking()
+                .ToArray();
+
+            var usersInfo = new
+            {
+                usersCount = usersWithProducts.Length,
+                users = usersWithProducts
+            };
+
+            return JsonConvert.SerializeObject(usersInfo, Formatting.Indented);
+
+        }
+
     }
 }
