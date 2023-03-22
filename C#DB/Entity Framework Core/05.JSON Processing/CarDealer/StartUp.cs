@@ -38,7 +38,9 @@ namespace CarDealer
 
             //string result = GetCarsWithTheirListOfParts(dbContext);
 
-            string result = GetTotalSalesByCustomer(dbContext);
+            //string result = GetTotalSalesByCustomer(dbContext);
+
+            string result = GetSalesWithAppliedDiscount(dbContext);
             Console.WriteLine(result);
         }
 
@@ -263,6 +265,31 @@ namespace CarDealer
                .ToArray();
 
             return JsonConvert.SerializeObject(totalSalesByCustomer, Formatting.Indented);
+        }
+
+        //Problem 19 
+        public static string GetSalesWithAppliedDiscount(CarDealerContext context)
+        {
+            var salesWithAppliedDiscount = context
+                .Sales
+                .Take(10)
+                .Select(s => new
+                {
+                    car = new
+                    {
+                        Make = s.Car.Make,
+                        Model = s.Car.Model,
+                        TraveledDistance = s.Car.TravelledDistance,
+                    },
+                    customerName = s.Customer.Name,
+                    discount = s.Discount.ToString("f2"),
+                    price = s.Car.PartsCars.Sum(cp => cp.Part.Price).ToString("f2"),
+                    priceWithDiscount = (s.Car.PartsCars.Sum(cp => cp.Part.Price) * (1 - s.Discount / 100)).ToString("f2")
+                })
+                .ToArray();
+
+            return JsonConvert.SerializeObject(salesWithAppliedDiscount, Formatting.Indented);  
+
         }
     }
 }
