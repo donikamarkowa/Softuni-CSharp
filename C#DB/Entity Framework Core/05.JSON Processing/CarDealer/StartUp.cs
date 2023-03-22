@@ -263,6 +263,8 @@ namespace CarDealer
                .ToArray();
 
             return JsonConvert.SerializeObject(totalSalesByCustomer, Formatting.Indented);
+
+            //Problem 19
         }
     }
 }
