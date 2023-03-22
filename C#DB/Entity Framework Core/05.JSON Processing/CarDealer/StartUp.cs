@@ -5,6 +5,7 @@ using CarDealer.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Xml.Linq;
 
 namespace CarDealer
 {
@@ -33,7 +34,9 @@ namespace CarDealer
 
             //string result = GetCarsFromMakeToyota(dbContext);
 
-            string result = GetLocalSuppliers(dbContext);
+            //string result = GetLocalSuppliers(dbContext);
+
+            string result = GetCarsWithTheirListOfParts(dbContext);
             Console.WriteLine(result);
         }
 
@@ -210,6 +213,33 @@ namespace CarDealer
                 .ToArray();
 
             return JsonConvert.SerializeObject(suppliers, Formatting.Indented); 
+        }
+
+        //Problem 17
+        public static string GetCarsWithTheirListOfParts(CarDealerContext context)
+        {
+            var carsWithTheirParts = context
+                .Cars
+                .Select(c => new
+                {
+                    car = new
+                    {
+                        Make = c.Make,
+                        Moldel = c.Model,
+                        TraveledDistance = c.TravelledDistance
+                    },
+                    parts = c.PartsCars
+                    .Select(p => new
+                    {
+                        Name = p.Part.Name,
+                        Price = $"{p.Part.Price:F2}"
+                    })
+                    .ToArray()
+                })
+                .AsNoTracking()
+                .ToArray();
+
+            return JsonConvert.SerializeObject(carsWithTheirParts, Formatting.Indented);
         }
     }
 }
