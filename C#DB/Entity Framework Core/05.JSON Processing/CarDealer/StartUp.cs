@@ -18,8 +18,11 @@ namespace CarDealer
             //string inputJson = File.ReadAllText(@"../../../Datasets/parts.json");
             //string result = ImportParts(dbContext, inputJson);
 
-            string inputJson = File.ReadAllText(@"../../../Datasets/cars.json");
-            string result = ImportCars(dbContext, inputJson);   
+            //string inputJson = File.ReadAllText(@"../../../Datasets/cars.json");
+            //string result = ImportCars(dbContext, inputJson);
+
+            string inputJson = File.ReadAllText(@"../../../Datasets/customers.json");
+            string result = ImportCustomers(dbContext, inputJson);  
             Console.WriteLine(result);
         }
 
@@ -37,7 +40,7 @@ namespace CarDealer
             context.Suppliers.AddRange(suppliers);
             context.SaveChanges();
 
-            return $"Successfully imported {suppliers.Count}."; 
+            return $"Successfully imported {suppliers.Count}.";
         }
 
         //Problem 10
@@ -54,7 +57,7 @@ namespace CarDealer
 
             foreach (var partDto in partsDto)
             {
-                if(!context.Suppliers.Any(s => s.Id == partDto.SupplierId))
+                if (!context.Suppliers.Any(s => s.Id == partDto.SupplierId))
                 {
                     continue;
                 }
@@ -102,6 +105,24 @@ namespace CarDealer
             context.SaveChanges();
 
             return $"Successfully imported {context.Cars.Count()}.";
+        }
+
+        //Problem 12
+        public static string ImportCustomers(CarDealerContext context, string inputJson)
+        {
+            IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<CarDealerProfile>();
+            }));
+
+            var customersDto = JsonConvert.DeserializeObject<ImportCustomerDto[]>(inputJson);
+
+            ICollection<Customer> customers = mapper.Map<Customer[]>(customersDto);
+
+            context.Customers.AddRange(customers);
+            context.SaveChanges();
+
+            return $"Successfully imported {customers.Count}."; 
         }
     }
 }
