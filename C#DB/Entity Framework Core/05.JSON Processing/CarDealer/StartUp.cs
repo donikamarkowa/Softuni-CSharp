@@ -31,7 +31,9 @@ namespace CarDealer
 
             //string result = GetOrderedCustomers(dbContext);
 
-            string result = GetCarsFromMakeToyota(dbContext);
+            //string result = GetCarsFromMakeToyota(dbContext);
+
+            string result = GetLocalSuppliers(dbContext);
             Console.WriteLine(result);
         }
 
@@ -190,6 +192,24 @@ namespace CarDealer
                 .ToArray();
 
             return JsonConvert.SerializeObject (cars, Formatting.Indented);
+        }
+
+        //Problem 16 
+        public static string GetLocalSuppliers(CarDealerContext context)
+        {
+            var suppliers = context
+                .Suppliers
+                .Where(s => s.IsImporter == false)
+                .Select(s => new
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    PartsCount = s.Parts.Count
+                })
+                .AsNoTracking()
+                .ToArray();
+
+            return JsonConvert.SerializeObject(suppliers, Formatting.Indented); 
         }
     }
 }
