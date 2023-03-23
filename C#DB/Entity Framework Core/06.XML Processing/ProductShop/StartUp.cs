@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ProductShop.Data;
+using ProductShop.DTOs.Export;
 using ProductShop.DTOs.Import;
 using ProductShop.Models;
 using System.Xml.Serialization;
@@ -22,8 +23,10 @@ namespace ProductShop
             //string inputXml = File.ReadAllText(@"../../../Datasets/categories.xml");
             //string result = ImportCategories(context, inputXml);    
 
-            string inputXml = File.ReadAllText(@"../../../Datasets/categories-products.xml");
-            string result = ImportCategoryProducts(context, inputXml);  
+            //string inputXml = File.ReadAllText(@"../../../Datasets/categories-products.xml");
+            //string result = ImportCategoryProducts(context, inputXml);  
+
+            string result = GetProductsInRange(context);
             Console.WriteLine(result);
         }
         //Problem 01
@@ -128,6 +131,32 @@ namespace ProductShop
             context.SaveChanges();
 
             return $"Successfully imported {categoryProducts.Count}";
+        }
+
+        //Problem 05
+        public static string GetProductsInRange(ProductShopContext context)
+        {
+            var productsInRange = context
+                .Products
+                .Where(p => p.Price >= 500 && p.Price <= 1000)
+                .OrderBy(p => p.Price)
+                .Take(10)
+                .Select(p => new ExportProductsInRangeDto()
+                {
+                    Name = p.Name,
+                    Price = p.Price,
+                    BuyerFullName = p.Buyer.FirstName + " " + p.Buyer.LastName
+                })
+                .ToArray();
+
+            var namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, null);
+
+            var serializer = new XmlSerializer(typeof(ExportProductsInRangeDto[]), new XmlRootAttribute("Products"));
+            using var writer = new StringWriter();  
+
+            serializer.Serialize(writer, productsInRange, namespaces);
+            return writer.ToString();
         }
     }
 }
