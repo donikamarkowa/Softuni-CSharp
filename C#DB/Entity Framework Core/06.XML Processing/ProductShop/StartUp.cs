@@ -28,7 +28,8 @@ namespace ProductShop
 
             //string result = GetProductsInRange(context);
 
-            string result = GetSoldProducts(context);
+            //string result = GetSoldProducts(context);
+            string result = GetCategoriesByProductsCount(context);
             Console.WriteLine(result);
         }
         //Problem 01
@@ -192,6 +193,34 @@ namespace ProductShop
 
             using var writer = new StringWriter();
             serializer.Serialize(writer, usersWithSoldItems, namespaces);
+
+            return writer.ToString();
+        }
+
+        //Problem 07
+        public static string GetCategoriesByProductsCount(ProductShopContext context)
+        {
+            var categoriesWithProducts = context
+                .Categories
+                .Include(c => c.CategoryProducts)
+                .Select(c => new ExportCategoryWithProductsDto()
+                {
+                    Name = c.Name,  
+                    CountProducts = c.CategoryProducts.Count,
+                    AveragePrice = c.CategoryProducts.Average(p => p.Product.Price),
+                    TotalRevenue = c.CategoryProducts.Sum(p => p.Product.Price)
+                })
+                .OrderByDescending(c => c.CountProducts)
+                .ThenBy(c => c.TotalRevenue)
+                .ToArray();
+
+            var namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(String.Empty, null);
+
+            var serializer = new XmlSerializer(typeof(ExportCategoryWithProductsDto[]), new XmlRootAttribute("Categories"));
+
+            using var writer = new StringWriter();
+            serializer.Serialize (writer, categoriesWithProducts, namespaces);
 
             return writer.ToString();
         }
