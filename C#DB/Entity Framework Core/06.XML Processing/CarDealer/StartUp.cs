@@ -13,11 +13,14 @@ namespace CarDealer
         {
             CarDealerContext context = new CarDealerContext();
 
-            string inputXml = File.ReadAllText(@"../../../Datasets/suppliers.xml");
-            string result = ImportSuppliers(context, inputXml);
+            //string inputXml = File.ReadAllText(@"../../../Datasets/suppliers.xml");
+            //string result = ImportSuppliers(context, inputXml);
+
+            string inputXml = File.ReadAllText(@"../../../Datasets/parts.xml");
+            string result = ImportParts(context, inputXml);
             Console.WriteLine(result);
         }
-        //Problem 01
+        //Problem 09
         public static string ImportSuppliers(CarDealerContext context, string inputXml)
         {
             IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
@@ -51,6 +54,39 @@ namespace CarDealer
             context.SaveChanges();
 
             return $"Successfully imported {suppliers.Count}";
+        }
+
+        //Problem 10 
+        public static string ImportParts(CarDealerContext context, string inputXml)
+        {
+            IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<CarDealerProfile>();
+            }));
+
+            XmlRootAttribute rootAttribute = new XmlRootAttribute("Parts");
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(ImportPartDto[]), rootAttribute);
+
+            StringReader reader = new StringReader(inputXml);
+            ImportPartDto[] partDtos = (ImportPartDto[])xmlSerializer.Deserialize(reader);  
+
+            ICollection<Part> parts = new HashSet<Part>();
+
+            foreach (var partDto in partDtos)
+            {
+                if (!context.Suppliers.Any(s => s.Id == partDto.SupplierId))
+                {
+                    continue;
+                }
+
+                Part part = mapper.Map<Part>(partDto);
+                parts.Add(part);
+            }
+
+            context.Parts.AddRange(parts); 
+            context.SaveChanges();
+
+            return $"Successfully imported {parts.Count}";
         }
     }
 }
