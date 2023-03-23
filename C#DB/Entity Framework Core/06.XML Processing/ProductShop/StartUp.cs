@@ -2,8 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using ProductShop.Data;
 using ProductShop.DTOs.Export;
+using ProductShop.DTOs.Export.UsersAndProducts;
 using ProductShop.DTOs.Import;
 using ProductShop.Models;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace ProductShop
@@ -221,6 +223,48 @@ namespace ProductShop
 
             using var writer = new StringWriter();
             serializer.Serialize (writer, categoriesWithProducts, namespaces);
+
+            return writer.ToString();
+        }
+
+        //Problem 08
+        public static string GetUsersWithProducts(ProductShopContext context)
+        {
+            var usersWithProducts = new ExportUsersCount
+            {
+                Count = context.Users.Count(u => u.ProductsSold.Any()),
+                Users = context.Users
+                   .Where(u => u.ProductsSold.Any())
+                   .OrderByDescending(u => u.ProductsSold.Count)
+                   .Select(u => new ExportUserProductsDto
+                   {
+                       FirstName = u.FirstName,
+                       LastName = u.LastName,
+                       Age = u.Age,
+                       SoldProducts = new ExportProductsCountDto
+                       {
+                           Count = u.ProductsSold.Count,
+                           Products = u.ProductsSold.Select(p => new ExportProductsSoldDto
+                           {
+                               Name = p.Name,
+                               Price = p.Price
+                           })
+                           .OrderByDescending(p => p.Price)
+                           .ToArray()
+                       }
+                   })
+                   .Take(10)
+                   .ToArray()
+            };
+
+            var namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, null);
+
+            var serializer = new XmlSerializer(typeof(ExportUsersCount), new XmlRootAttribute("Users"));
+
+            using var writer = new StringWriter();
+
+            serializer.Serialize(writer, usersWithProducts, namespaces);
 
             return writer.ToString();
         }
