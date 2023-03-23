@@ -12,6 +12,6 @@ namespace ProductShop.DTOs.Import
         public string LastName { get; set; } = null!;
 
         [XmlElement("age")]
-        public int Age { get; set; }
+        public int? Age { get; set; }
     }
 }
