@@ -26,7 +26,9 @@ namespace ProductShop
             //string inputXml = File.ReadAllText(@"../../../Datasets/categories-products.xml");
             //string result = ImportCategoryProducts(context, inputXml);  
 
-            string result = GetProductsInRange(context);
+            //string result = GetProductsInRange(context);
+
+            string result = GetSoldProducts(context);
             Console.WriteLine(result);
         }
         //Problem 01
@@ -156,6 +158,41 @@ namespace ProductShop
             using var writer = new StringWriter();  
 
             serializer.Serialize(writer, productsInRange, namespaces);
+            return writer.ToString();
+        }
+
+        //Problem 06
+        public static string GetSoldProducts(ProductShopContext context)
+        {
+            var usersWithSoldItems = context
+                .Users
+                .Where(u => u.ProductsSold.Any(p => p.Buyer != null))
+                .OrderBy(u => u.LastName)
+                .ThenBy(u => u.FirstName)
+                .Take(5)
+                .Select(u => new ExportUserWithProductsDto()
+                {
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Products = u.ProductsSold
+                                .Where(p => p.Buyer != null)
+                                .Select(p => new ExportProductsOnUser()
+                                {
+                                    Name = p.Name,
+                                    Price = p.Price
+                                })
+                                .ToArray()
+                })
+                .AsNoTracking()
+                .ToArray();
+
+            var serializer = new XmlSerializer(typeof(ExportUserWithProductsDto[]), new XmlRootAttribute("Users"));
+            var namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, null);
+
+            using var writer = new StringWriter();
+            serializer.Serialize(writer, usersWithSoldItems, namespaces);
+
             return writer.ToString();
         }
     }
