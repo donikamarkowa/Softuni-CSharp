@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Xml.Serialization;
 
 namespace ProductShop.DTOs.Export.UsersAndProducts
 {
-    internal class ExportUsersCount
+    [XmlType("Users")]
+    public class ExportUsersCount
     {
+        [XmlElement("count")]
+        public int Count { get; set; }
+
+        [XmlArray("users")]
+        public ExportUserProductsDto[] Users { get; set; }
     }
 }

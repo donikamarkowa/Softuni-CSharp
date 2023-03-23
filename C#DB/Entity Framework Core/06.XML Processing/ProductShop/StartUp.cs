@@ -31,7 +31,9 @@ namespace ProductShop
             //string result = GetProductsInRange(context);
 
             //string result = GetSoldProducts(context);
-            string result = GetCategoriesByProductsCount(context);
+            //string result = GetCategoriesByProductsCount(context);
+
+            string result = GetUsersWithProducts(context);
             Console.WriteLine(result);
         }
         //Problem 01
