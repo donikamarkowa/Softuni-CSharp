@@ -19,8 +19,11 @@ namespace ProductShop
             //string inputXml = File.ReadAllText(@"../../../Datasets/products.xml");
             //string result = ImportProducts(context, inputXml);
 
-            string inputXml = File.ReadAllText(@"../../../Datasets/categories.xml");
-            string result = ImportCategories(context, inputXml);    
+            //string inputXml = File.ReadAllText(@"../../../Datasets/categories.xml");
+            //string result = ImportCategories(context, inputXml);    
+
+            string inputXml = File.ReadAllText(@"../../../Datasets/categories-products.xml");
+            string result = ImportCategoryProducts(context, inputXml);  
             Console.WriteLine(result);
         }
         //Problem 01
@@ -43,7 +46,7 @@ namespace ProductShop
             return $"Successfully imported {users.Count}"; ;
         }
 
-        ////Problem 02
+        //Problem 02
         public static string ImportProducts(ProductShopContext context, string inputXml)
         {
             IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
@@ -93,6 +96,38 @@ namespace ProductShop
             context.SaveChanges();
 
             return $"Successfully imported {categories.Count}"; 
+        }
+
+        //Problem 04
+        public static string ImportCategoryProducts(ProductShopContext context, string inputXml)
+        {
+            IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<ProductShopProfile>();
+            }));
+
+            XmlSerializer serializer = new XmlSerializer(typeof(ImportCategoryProductDto[]), new XmlRootAttribute("CategoryProducts"));
+
+            StringReader reader = new StringReader(inputXml);
+            ImportCategoryProductDto[] categoryProductDto = (ImportCategoryProductDto[])serializer.Deserialize(reader);
+            ICollection<CategoryProduct> categoryProducts = new HashSet<CategoryProduct>();
+
+            foreach (var cpDto in categoryProductDto)
+            {
+                if (context.Categories.Find(cpDto.CategoryId) == null 
+                    || context.Products.Find(cpDto.ProductId) == null)
+                {
+                    continue;
+                }
+
+                CategoryProduct categoryProduct = mapper.Map<CategoryProduct>(cpDto);
+                categoryProducts.Add(categoryProduct);
+            }
+
+            context.CategoryProducts.AddRange(categoryProducts);
+            context.SaveChanges();
+
+            return $"Successfully imported {categoryProducts.Count}";
         }
     }
 }
