@@ -17,6 +17,7 @@ namespace ProductShop
             string result = ImportUsers(context, inputXml);
             Console.WriteLine(result);
         }
+        //Problem 01
         public static string ImportUsers(ProductShopContext context, string inputXml)
         {
             IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
