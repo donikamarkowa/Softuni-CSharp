@@ -34,7 +34,9 @@ namespace CarDealer
 
             //string result = GetCarsWithDistance(context);
 
-            string result = GetCarsFromMakeBmw(context);
+            //string result = GetCarsFromMakeBmw(context);
+
+            string result = GetCarsWithTheirListOfParts(context);
             Console.WriteLine(result);
         }
         //Problem 09
@@ -274,6 +276,41 @@ namespace CarDealer
             XmlSerializer serializer = new XmlSerializer(typeof(ExportLocalSupplierDto[]), new XmlRootAttribute("suppliers"));
             using var writer = new StringWriter();
             serializer.Serialize(writer, localSuppliers, namespaces);
+
+            return writer.ToString();
+        }
+
+        //Problem 17
+        public static string GetCarsWithTheirListOfParts(CarDealerContext context)
+        {
+            var carsWithTheirParts = context
+                .Cars
+                .OrderByDescending(c => c.TraveledDistance)
+                .ThenBy(c => c.Model)
+                .Take(5)
+                .Select(c => new ExportCarsWithTheirListOfPartsDto()
+                {
+                    Make = c.Make,
+                    Model = c.Model,
+                    TraveledDistance = c.TraveledDistance,
+                    PartsForCar = c.PartsCars
+                                   .OrderByDescending(c => c.Part.Price)
+                                   .Select(p => new ExportListPartsForCar()
+                                   {
+                                       Name = p.Part.Name,
+                                       Price = p.Part.Price
+                                   })
+                                   .ToArray()
+
+                })
+                .ToArray();
+
+            XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, null);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(ExportCarsWithTheirListOfPartsDto[]), new XmlRootAttribute("cars"));
+            using var writer = new StringWriter();
+            serializer.Serialize(writer, carsWithTheirParts, namespaces);
 
             return writer.ToString();
         }
