@@ -36,7 +36,9 @@ namespace CarDealer
 
             //string result = GetCarsFromMakeBmw(context);
 
-            string result = GetCarsWithTheirListOfParts(context);
+            //string result = GetCarsWithTheirListOfParts(context);
+
+            string result = GetTotalSalesByCustomer(context);
             Console.WriteLine(result);
         }
         //Problem 09
@@ -311,6 +313,46 @@ namespace CarDealer
             XmlSerializer serializer = new XmlSerializer(typeof(ExportCarsWithTheirListOfPartsDto[]), new XmlRootAttribute("cars"));
             using var writer = new StringWriter();
             serializer.Serialize(writer, carsWithTheirParts, namespaces);
+
+            return writer.ToString();
+        }
+
+        //Problem 18
+        public static string GetTotalSalesByCustomer(CarDealerContext context)
+        {
+            var customers = context
+                .Customers
+                .Where(c => c.Sales.Any())
+                .Select(c => new
+                {
+                    Name = c.Name,
+                    BoughtCars = c.Sales.Count,
+                    SpentMoney = c.Sales.Select(s => new
+                    {
+                        Price = c.IsYoungDriver
+                        ? s.Car.PartsCars.Sum(p => Math.Round((double)p.Part.Price * 0.95, 2))
+                       : s.Car.PartsCars.Sum(p => (double)p.Part.Price)
+                    })
+                    .ToArray()  
+                })
+                .ToArray();
+
+            var customersDto = customers
+               .OrderByDescending(c => c.SpentMoney.Sum(s => s.Price))
+               .Select(c => new ExportCustomerTotalSales
+               {
+                   Name = c.Name,
+                   BoughtCars = c.BoughtCars,
+                   SpentMoney = c.SpentMoney.Sum(s => s.Price).ToString("f2")
+               })
+               .ToArray();
+
+            XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, null);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(ExportCustomerTotalSales[]), new XmlRootAttribute("customers"));
+            using var writer = new StringWriter();
+            serializer.Serialize(writer, customers, namespaces);
 
             return writer.ToString();
         }
