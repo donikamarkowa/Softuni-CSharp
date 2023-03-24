@@ -32,7 +32,9 @@ namespace CarDealer
             //string inputXml = File.ReadAllText(@"../../../Datasets/sales.xml");
             //string result = ImportSales(context, inputXml); 
 
-            string result = GetCarsWithDistance(context);
+            //string result = GetCarsWithDistance(context);
+
+            string result = GetCarsFromMakeBmw(context);
             Console.WriteLine(result);
         }
         //Problem 09
@@ -221,6 +223,36 @@ namespace CarDealer
             serializer.Serialize(writer, carDtos, namespaces);
 
             return writer.ToString();
+        }
+
+        //Problem 15
+        public static string GetCarsFromMakeBmw(CarDealerContext context)
+        {
+            var carsFromMakeBmw = context
+                .Cars
+                .Where(c => c.Make == "BMW")
+                .OrderBy(c => c.Model)
+                .ThenByDescending(c => c.TraveledDistance)
+                .ToArray();
+
+            var carFromMakeBmwDtos = carsFromMakeBmw
+                .Select(c => new ExportCarsFromMakeBmwDtos()
+                {
+                    Id = c.Id,  
+                    Model = c.Model,
+                    TraveledDistance = c.TraveledDistance
+                })
+                .ToArray(); 
+
+            var namespaces = new XmlSerializerNamespaces(); 
+            namespaces.Add(string.Empty, null);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(ExportCarsFromMakeBmwDtos[]), new XmlRootAttribute("cars"));
+            using var writer = new StringWriter();
+            serializer.Serialize(writer, carFromMakeBmwDtos, namespaces);
+
+            return writer.ToString();
+           
         }
     }
 }
