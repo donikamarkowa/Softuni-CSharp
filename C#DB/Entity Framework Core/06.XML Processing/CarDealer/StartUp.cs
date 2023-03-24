@@ -16,8 +16,14 @@ namespace CarDealer
             //string inputXml = File.ReadAllText(@"../../../Datasets/suppliers.xml");
             //string result = ImportSuppliers(context, inputXml);
 
-            string inputXml = File.ReadAllText(@"../../../Datasets/parts.xml");
-            string result = ImportParts(context, inputXml);
+            //string inputXml = File.ReadAllText(@"../../../Datasets/parts.xml");
+            //string result = ImportParts(context, inputXml);
+
+            //string inputXml = File.ReadAllText(@"../../../Datasets/cars.xml");
+            //string result = ImportCars(context, inputXml);  
+
+            string inputXml = File.ReadAllText(@"../../../Datasets/cars.xml");
+            string result = ImportCars(context, inputXml);
             Console.WriteLine(result);
         }
         //Problem 09
@@ -87,6 +93,38 @@ namespace CarDealer
             context.SaveChanges();
 
             return $"Successfully imported {parts.Count}";
+        }
+
+        //Problem 11
+        public static string ImportCars(CarDealerContext context, string inputXml)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(ImportCarDto[]), new XmlRootAttribute("Cars"));
+
+            using var reader = new StringReader(inputXml);
+            ImportCarDto[] carDtos = (ImportCarDto[])serializer.Deserialize(reader);    
+
+            var cars = carDtos
+                .Select(c => new Car
+                {
+                    Make = c.Make,
+                    Model = c.Model,
+                    TraveledDistance = c.TraveledDistance,
+                    PartsCars = c.PartsCar
+                    .Select(p => p.PartId)
+                    .Distinct()
+                    .Select(d => new PartCar
+                    {
+                        PartId = d
+                    })
+                    .ToList()
+                })
+                .ToList();
+
+            context.Cars.AddRange(cars);
+            context.SaveChanges();
+
+            return $"Successfully imported {cars.Count}";
+
         }
     }
 }
