@@ -22,8 +22,11 @@ namespace CarDealer
             //string inputXml = File.ReadAllText(@"../../../Datasets/cars.xml");
             //string result = ImportCars(context, inputXml);  
 
-            string inputXml = File.ReadAllText(@"../../../Datasets/cars.xml");
-            string result = ImportCars(context, inputXml);
+            //string inputXml = File.ReadAllText(@"../../../Datasets/cars.xml");
+            //string result = ImportCars(context, inputXml);
+
+            string inputXml = File.ReadAllText(@"../../../Datasets/customers.xml");
+            string result = ImportCustomers(context, inputXml); 
             Console.WriteLine(result);
         }
         //Problem 09
@@ -125,6 +128,32 @@ namespace CarDealer
 
             return $"Successfully imported {cars.Count}";
 
+        }
+
+        //Problem 12
+        public static string ImportCustomers(CarDealerContext context, string inputXml)
+        {
+            IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<CarDealerProfile>();
+            }));
+
+            XmlSerializer serializer = new XmlSerializer(typeof(ImportCustomerDto[]), new XmlRootAttribute("Customers"));
+            using var reader = new StringReader(inputXml);
+            ImportCustomerDto[] customerDtos = (ImportCustomerDto[])serializer.Deserialize(reader);
+
+            ICollection<Customer> customers = new HashSet<Customer>();
+
+            foreach (var customerDto in customerDtos)
+            {
+                Customer customer = mapper.Map<Customer>(customerDto);
+                customers.Add(customer);
+            }
+
+            context.Customers.AddRange(customers);
+            context.SaveChanges();
+
+            return $"Successfully imported {customers.Count}";
         }
     }
 }
