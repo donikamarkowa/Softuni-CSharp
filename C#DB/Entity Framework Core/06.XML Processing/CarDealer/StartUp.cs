@@ -4,6 +4,7 @@ using CarDealer.DTOs.Export;
 using CarDealer.DTOs.Import;
 using CarDealer.Models;
 using CarDealer.Utilities;
+using Microsoft.EntityFrameworkCore;
 using System.Xml.Serialization;
 
 namespace CarDealer
@@ -352,7 +353,41 @@ namespace CarDealer
 
             XmlSerializer serializer = new XmlSerializer(typeof(ExportCustomerTotalSales[]), new XmlRootAttribute("customers"));
             using var writer = new StringWriter();
-            serializer.Serialize(writer, customers, namespaces);
+            serializer.Serialize(writer, customersDto, namespaces);
+
+            return writer.ToString();
+        }
+
+        //Problem 19 
+        public static string GetSalesWithAppliedDiscount(CarDealerContext context)
+        {
+            var salesWithDiscount = context
+                .Sales
+                .Include(s => s.Car)
+                .ThenInclude(c => c.PartsCars)
+                .ThenInclude(pc => pc.Part)
+                .Select(s => new ExportSaleWithAppliedDiscountDto
+                {
+                    Car = new ExportCarWithSaleDto
+                    {
+                        Make = s.Car.Make,
+                        Model = s.Car.Model,
+                        TraveledDistance = s.Car.TraveledDistance
+                    },
+                    Discount = s.Discount,
+                    CustomerName = s.Customer.Name,
+                    Price = s.Car.PartsCars.Sum(p => p.Part.Price).ToString("f2"),
+                    PriceWithDiscount = Math.Round((double)(s.Car.PartsCars
+                    .Sum(p => p.Part.Price) * (1 - (s.Discount / 100))), 4)
+                    .ToString()
+                })
+                .ToArray();
+
+            var namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, null);
+            var serializer = new XmlSerializer(typeof(ExportSaleWithAppliedDiscountDto[]), new XmlRootAttribute("sales"));
+            using var writer = new StringWriter();
+            serializer.Serialize(writer, salesWithDiscount, namespaces);
 
             return writer.ToString();
         }
