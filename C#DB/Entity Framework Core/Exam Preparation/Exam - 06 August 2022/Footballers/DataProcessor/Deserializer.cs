@@ -4,6 +4,7 @@
     using Footballers.Data.Models;
     using Footballers.Data.Models.Enums;
     using Footballers.DataProcessor.ImportDto;
+    using Newtonsoft.Json;
     using System.ComponentModel.DataAnnotations;
     using System.Globalization;
     using System.Text;
@@ -59,7 +60,7 @@
                                                             DateTimeStyles.None,
                                                             out validEndDate);
 
-                    if (IsValid(footballerDto) || !isStartDateValid 
+                    if (!IsValid(footballerDto) || !isStartDateValid 
                         || !isEndDateValid || validStartDate > validEndDate)
                     {
                         sb.AppendLine(ErrorMessage);
@@ -91,7 +92,50 @@
 
         public static string ImportTeams(FootballersContext context, string jsonString)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+            var teamsDto = JsonConvert.DeserializeObject<ImportTeamDto[]>(jsonString);
+
+            ICollection<Team> teams = new HashSet<Team>();
+            foreach (var teamDto in teamsDto)
+            {
+                if (!IsValid(teamDto) || teamDto.Trophies == 0)
+                {
+                    sb.AppendLine(ErrorMessage);
+                    continue;
+                }
+                Team team = new Team()
+                {
+                    Name = teamDto.Name,
+                    Nationality = teamDto.Nationality,
+                    Trophies = teamDto.Trophies
+                };
+                foreach (var footballerId in teamDto.Footballers.Distinct())
+                {
+                    Footballer footballer = context.Footballers.Find(footballerId);
+
+                    if (footballer == null)
+                    {
+                        sb.AppendLine(ErrorMessage);
+                        continue;
+                    }
+
+                    TeamFootballer teamFootballer = new TeamFootballer()
+                    {
+                        Footballer = footballer,
+                        Team = team
+                    };
+
+                    team.TeamsFootballers.Add(teamFootballer);
+                }
+                teams.Add(team);
+                sb.AppendLine(string.Format(SuccessfullyImportedTeam, team.Name, team.TeamsFootballers.Count));
+
+            }
+
+            context.Teams.AddRange(teams);
+            context.SaveChanges();
+
+            return sb.ToString();
         }
 
         private static bool IsValid(object dto)
