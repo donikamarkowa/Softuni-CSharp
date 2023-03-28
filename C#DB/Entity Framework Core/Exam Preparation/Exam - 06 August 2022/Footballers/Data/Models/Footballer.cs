@@ -1,6 +1,7 @@
 ﻿using Footballers.Data.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Serialization;
 
 namespace Footballers.Data.Models
 {
@@ -19,12 +20,16 @@ namespace Footballers.Data.Models
         [MaxLength(40)]
         public string Name { get; set; } = null!;
         [Required]
+        [XmlElement("ContractStartDate")]
         public DateTime ContractStartDate  { get; set; }
 
         [Required]
+        [XmlElement("ContractEndDate")]
+
         public DateTime ContractEndDate  { get; set; }
 
         [Required]
+        [XmlElement("PositionType")]
         public PositionType PositionType  { get; set; }
 
         [Required]
