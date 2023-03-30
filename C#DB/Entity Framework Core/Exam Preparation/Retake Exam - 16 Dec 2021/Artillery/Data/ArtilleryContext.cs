@@ -16,11 +16,11 @@
         { 
         }
 
-        DbSet<Country> Countries { get; set; } = null!;
-        DbSet<CountryGun> CountriesGuns { get; set; } = null!;
-        DbSet<Gun> Guns { get; set; } = null!;
-        DbSet<Manufacturer> Manufacturers { get; set; }= null!; 
-        DbSet<Shell> Shells { get; set; } = null!;
+        public DbSet<Country> Countries { get; set; } = null!;
+        public DbSet<CountryGun> CountriesGuns { get; set; } = null!;
+        public DbSet<Gun> Guns { get; set; } = null!;
+        public DbSet<Manufacturer> Manufacturers { get; set; }= null!; 
+        public DbSet<Shell> Shells { get; set; } = null!;
 
          protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
