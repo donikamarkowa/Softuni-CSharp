@@ -17,17 +17,17 @@ namespace Theatre
 
             ResetDatabase(context, shouldDropDatabase: true);
 
-            //var projectDir = GetProjectDirectory();
-            //Console.WriteLine(projectDir);
+            var projectDir = GetProjectDirectory();
+            Console.WriteLine(projectDir);
 
-            //ImportEntities(context, projectDir + @"Datasets/", projectDir + @"ImportResults/");
+            ImportEntities(context, projectDir + @"Datasets/", projectDir + @"ImportResults/");
 
             //ExportEntities(context, projectDir + @"ExportResults/");
 
-            //using (var transaction = context.Database.BeginTransaction())
-            //{
-            //    transaction.Rollback();
-            //}
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                transaction.Rollback();
+            }
 
         }
 
