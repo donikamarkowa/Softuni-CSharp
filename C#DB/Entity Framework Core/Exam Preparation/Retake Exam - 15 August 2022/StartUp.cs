@@ -1,7 +1,8 @@
-﻿namespace Artillery
+﻿namespace Trucks
 {
     using System;
     using System.IO;
+    using System.Globalization;
 
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,9 @@
     {
         public static void Main()
         {
-            var context = new ArtilleryContext();
+            var context = new TrucksContext();
 
-            ResetDatabase(context, shouldDropDatabase: true);
+            ResetDatabase(context, shouldDropDatabase: false);
 
             var projectDir = GetProjectDirectory();
 
@@ -26,43 +27,36 @@
             {
                 transaction.Rollback();
             }
-
         }
 
-        private static void ImportEntities(ArtilleryContext context, string baseDir, string exportDir)
+        private static void ImportEntities(TrucksContext context, string baseDir, string exportDir)
         {
-            var importCountries =
-              DataProcessor.Deserializer.ImportCountries(context,
-                  File.ReadAllText(baseDir + "countries.xml"));
-            PrintAndExportEntityToFile(importCountries, exportDir + "Actual Result - ImportCountries.txt");
+            var despatchers =
+                DataProcessor.Deserializer.ImportDespatcher(context,
+                    File.ReadAllText(baseDir + "despatchers.xml"));
 
-            var importManufacturers = DataProcessor.Deserializer.ImportManufacturers(context,
-               File.ReadAllText(baseDir + "manufacturers.xml"));
-            PrintAndExportEntityToFile(importManufacturers, exportDir + "Actual Result - ImportMnufacturers.txt");
+            PrintAndExportEntityToFile(despatchers, exportDir + "Actual Result - ImportDespatchers.txt");
 
-            var importShells = DataProcessor.Deserializer.ImportShells(context,
-              File.ReadAllText(baseDir + "shells.xml"));
-            PrintAndExportEntityToFile(importShells, exportDir + "Actual Result - ImportShells.txt");
+            var clients =
+             DataProcessor.Deserializer.ImportClient(context,
+                 File.ReadAllText(baseDir + "clients.json"));
 
-            var importGuns =
-                DataProcessor.Deserializer.ImportGuns(context,
-                    File.ReadAllText(baseDir + "guns.json"));
-            PrintAndExportEntityToFile(importGuns, exportDir + "Actual Result - ImportGuns.txt");
-
+            PrintAndExportEntityToFile(clients, exportDir + "Actual Result - ImportClients.txt");
         }
 
-        private static void ExportEntities(ArtilleryContext context, string exportDir)
+        private static void ExportEntities(TrucksContext context, string exportDir)
         {
-            var exportShells = DataProcessor.Serializer.ExportShells(context, 100);
-            Console.WriteLine(exportShells);
-            File.WriteAllText(exportDir + "Actual Result - ExportShells.json", exportShells);
+            var ExportDespatchersWithTheirTrucks = DataProcessor.Serializer.ExportDespatchersWithTheirTrucks(context);
+            Console.WriteLine(ExportDespatchersWithTheirTrucks);
+            File.WriteAllText(exportDir + "Actual Result - ExportDespatchersWithTheirTrucks.xml", ExportDespatchersWithTheirTrucks);
 
-            var exportActors = DataProcessor.Serializer.ExportGuns(context, "Krupp");
-            Console.WriteLine(exportActors);
-            File.WriteAllText(exportDir + "Actual Result - ExportGuns.xml", exportActors);
+            int tankCapacity = 1000;
+            var ExportClientsWithMostTrucks = DataProcessor.Serializer.ExportClientsWithMostTrucks(context, tankCapacity);
+            Console.WriteLine(ExportClientsWithMostTrucks);
+            File.WriteAllText(exportDir + "Actual Result - ExportClientsWithMostTrucks.json", ExportClientsWithMostTrucks);
         }
 
-        private static void ResetDatabase(ArtilleryContext context, bool shouldDropDatabase = false)
+        private static void ResetDatabase(TrucksContext context, bool shouldDropDatabase = false)
         {
             if (shouldDropDatabase)
             {
