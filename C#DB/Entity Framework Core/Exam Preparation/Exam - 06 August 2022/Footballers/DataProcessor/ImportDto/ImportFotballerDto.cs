@@ -1,11 +1,12 @@
-﻿using Footballers.Data.Models.Enums;
+﻿using Footballers.Data.Models;
+using Footballers.Data.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Serialization;
 
 namespace Footballers.DataProcessor.ImportDto
 {
     [XmlType("Footballer")]
-    public class ImportCoachFootballerDto
+    public class ImportFotballerDto
     {
         [XmlElement("Name")]
         [Required]
@@ -15,19 +16,18 @@ namespace Footballers.DataProcessor.ImportDto
 
         [XmlElement("ContractStartDate")]
         [Required]
-        public string ContractStartDate { get; set; } = null!;
+        public string ContractStartDate { get; set; }
 
         [XmlElement("ContractEndDate")]
         [Required]
-        public string ContractEndDate { get; set; } = null!;
-
-        [XmlElement("BestSkillType")]
-        [Required]
-        public int BestSkillType { get; set; }
+        public string ContractEndDate { get; set; }
 
         [XmlElement("PositionType")]
         [Required]
         public int PositionType { get; set; }
 
+        [XmlElement("BestSkillType")]
+        [Required]
+        public int BestSkillType { get; set; }
     }
 }

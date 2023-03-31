@@ -1,9 +1,9 @@
-﻿using Footballers.Data.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace Footballers.DataProcessor.ImportDto
 {
+    [JsonObject]
     public class ImportTeamDto
     {
         [JsonProperty("Name")]
@@ -24,6 +24,6 @@ namespace Footballers.DataProcessor.ImportDto
         public int Trophies { get; set; }
 
         [JsonProperty("Footballers")]
-        public List<Footballer> Footballers { get; set; }
+        public int[] Footballers { get; set; }
     }
 }

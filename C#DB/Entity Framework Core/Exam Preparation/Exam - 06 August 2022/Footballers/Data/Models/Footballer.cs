@@ -20,16 +20,12 @@ namespace Footballers.Data.Models
         [MaxLength(40)]
         public string Name { get; set; } = null!;
         [Required]
-        [XmlElement("ContractStartDate")]
         public DateTime ContractStartDate  { get; set; }
 
         [Required]
-        [XmlElement("ContractEndDate")]
-
         public DateTime ContractEndDate  { get; set; }
 
         [Required]
-        [XmlElement("PositionType")]
         public PositionType PositionType  { get; set; }
 
         [Required]

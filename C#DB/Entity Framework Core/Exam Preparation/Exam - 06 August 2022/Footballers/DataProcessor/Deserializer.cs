@@ -26,12 +26,13 @@
 
             XmlSerializer serializer = new XmlSerializer(typeof(ImportCoachDto[]), new XmlRootAttribute("Coaches"));
             StringReader reader = new StringReader(xmlString);
-            ImportCoachDto[] coachesDto = (ImportCoachDto[])serializer.Deserialize(reader);
+
+            var coachDtos = (ImportCoachDto[])serializer.Deserialize(reader);
 
             ICollection<Coach> coaches = new HashSet<Coach>();
-            foreach (var coachDto in coachesDto)
+            foreach (var coachDto in coachDtos)
             {
-                if(!IsValid(coachDto) || string.IsNullOrEmpty(coachDto.Nationality))
+                if (!IsValid(coachDto) || string.IsNullOrEmpty(coachDto.Nationality))
                 {
                     sb.AppendLine(ErrorMessage);
                     continue;
@@ -42,46 +43,43 @@
                     Nationality = coachDto.Nationality
                 };
 
-                List<Footballer> footballers = new List<Footballer>();
-
-                foreach (var footballerDto in coachDto.FootballerDtos)
+                ICollection<Footballer> footballers = new HashSet<Footballer>();
+                foreach (var footballerDto in coachDto.Footballers)
                 {
-                    DateTime validStartDate;
-                    bool isStartDateValid = DateTime.TryParseExact(footballerDto.ContractStartDate,
-                                                                    "dd/MM/yyyy",
-                                                                    CultureInfo.InvariantCulture,
-                                                                    DateTimeStyles.None,
-                                                                    out validStartDate);
+                    DateTime validContractStartDate;
+                    DateTime validContractEndDate;
 
-                    DateTime validEndDate;
-                    bool isEndDateValid = DateTime.TryParseExact(footballerDto.ContractEndDate,
-                                                            "dd/MM/yyyy",
-                                                            CultureInfo.InvariantCulture,
-                                                            DateTimeStyles.None,
-                                                            out validEndDate);
-
-                    if (!IsValid(footballerDto) || !isStartDateValid 
-                        || !isEndDateValid || validStartDate > validEndDate)
+                    bool isValidContractStartDate = DateTime.TryParseExact(footballerDto.ContractStartDate, 
+                                                                            "dd/MM/yyyy", 
+                                                                            CultureInfo.InvariantCulture,
+                                                                            DateTimeStyles.None, 
+                                                                            out validContractStartDate);
+                    bool isValidContractEndDate = DateTime.TryParseExact(footballerDto.ContractEndDate,
+                                                                            "dd/MM/yyyy",
+                                                                            CultureInfo.InvariantCulture,
+                                                                            DateTimeStyles.None,
+                                                                            out validContractEndDate);
+                    if (!IsValid(footballerDto) || 
+                        !isValidContractStartDate ||
+                        !isValidContractEndDate ||
+                        validContractStartDate > validContractEndDate)
                     {
                         sb.AppendLine(ErrorMessage);
                         continue;
                     }
-
                     Footballer footballer = new Footballer()
                     {
                         Name = footballerDto.Name,
+                        ContractStartDate = validContractStartDate,
+                        ContractEndDate = validContractEndDate,
                         BestSkillType = (BestSkillType)footballerDto.BestSkillType,
-                        PositionType = (PositionType)footballerDto.PositionType,
-                        ContractStartDate = validStartDate,
-                        ContractEndDate = validEndDate,
-                        Coach = coach
+                        PositionType = (PositionType)footballerDto.PositionType
                     };
-
                     footballers.Add(footballer);
                 }
-                coach.Footballers = footballers.ToArray();
+                coach.Footballers = footballers;
                 coaches.Add(coach);
-                sb.AppendLine(string.Format(SuccessfullyImportedCoach, coach.Name, footballers.Count));
+                sb.AppendLine(string.Format(SuccessfullyImportedCoach, coach.Name, coach.Footballers.Count));
             }
 
             context.Coaches.AddRange(coaches);
@@ -93,12 +91,12 @@
         public static string ImportTeams(FootballersContext context, string jsonString)
         {
             StringBuilder sb = new StringBuilder();
-            var teamsDto = JsonConvert.DeserializeObject<ImportTeamDto[]>(jsonString);
+            var teamDtos = JsonConvert.DeserializeObject<ImportTeamDto[]>(jsonString);
 
             ICollection<Team> teams = new HashSet<Team>();
-            foreach (var teamDto in teamsDto)
+            foreach (var teamDto in teamDtos)
             {
-                if (!IsValid(teamDto) || teamDto.Trophies == 0)
+                if (!IsValid(teamDto) || string.IsNullOrEmpty(teamDto.Nationality) || teamDto.Trophies == 0)
                 {
                     sb.AppendLine(ErrorMessage);
                     continue;
@@ -109,6 +107,7 @@
                     Nationality = teamDto.Nationality,
                     Trophies = teamDto.Trophies
                 };
+
                 foreach (var footballerId in teamDto.Footballers.Distinct())
                 {
                     Footballer footballer = context.Footballers.Find(footballerId);
@@ -119,23 +118,20 @@
                         continue;
                     }
 
-                    TeamFootballer teamFootballer = new TeamFootballer()
+                    team.TeamsFootballers.Add(new TeamFootballer()
                     {
                         Footballer = footballer,
                         Team = team
-                    };
-
-                    team.TeamsFootballers.Add(teamFootballer);
+                    });
                 }
+
                 teams.Add(team);
                 sb.AppendLine(string.Format(SuccessfullyImportedTeam, team.Name, team.TeamsFootballers.Count));
-
             }
-
             context.Teams.AddRange(teams);
             context.SaveChanges();
 
-            return sb.ToString();
+            return sb.ToString().TrimEnd();
         }
 
         private static bool IsValid(object dto)

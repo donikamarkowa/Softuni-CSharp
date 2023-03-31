@@ -17,6 +17,6 @@ namespace Footballers.DataProcessor.ImportDto
         public string Nationality { get; set; } = null!;
 
         [XmlArray("Footballers")]
-        public ImportCoachFootballerDto[] FootballerDtos { get; set; } = null!;
+        public ImportFotballerDto[] Footballers { get; set; }
     }
 }
