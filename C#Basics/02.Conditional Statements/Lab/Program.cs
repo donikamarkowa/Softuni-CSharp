@@ -1,4 +1,4 @@
-﻿namespace _01.First_Steps_In_Coding
+﻿namespace Lab
 {
     internal class Program
     {
