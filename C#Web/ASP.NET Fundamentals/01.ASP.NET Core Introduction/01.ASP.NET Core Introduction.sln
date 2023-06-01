@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp", "ChatApp\ChatApp.csproj", "{0C465489-87CF-4B77-BA3F-C90391A5F8FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextSplitterApp", "TextSplitterApp\TextSplitterApp.csproj", "{EAC2DB42-18AD-40E5-9518-3479F64AE931}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0C465489-87CF-4B77-BA3F-C90391A5F8FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C465489-87CF-4B77-BA3F-C90391A5F8FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C465489-87CF-4B77-BA3F-C90391A5F8FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C465489-87CF-4B77-BA3F-C90391A5F8FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAC2DB42-18AD-40E5-9518-3479F64AE931}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAC2DB42-18AD-40E5-9518-3479F64AE931}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAC2DB42-18AD-40E5-9518-3479F64AE931}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAC2DB42-18AD-40E5-9518-3479F64AE931}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {82AA3328-2950-440C-BA6B-2708B6D1352C}
+		SolutionGuid = {BD04D533-C1C1-440E-9F71-B502CC2D955B}
 	EndGlobalSection
 EndGlobal
