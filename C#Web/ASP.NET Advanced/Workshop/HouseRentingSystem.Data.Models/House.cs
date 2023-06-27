@@ -30,6 +30,8 @@
         public string ImageUrl { get; set; } = null!;
 
         public decimal PricePerMonth { get; set; }
+
+        public DateTime CreatedOn { get; set; }
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; } = null!;
 
