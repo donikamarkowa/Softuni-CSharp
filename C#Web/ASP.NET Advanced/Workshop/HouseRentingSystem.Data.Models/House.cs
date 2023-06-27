@@ -5,6 +5,11 @@
     using static Common.EntityValidationsConstants.House;
     public class House
     {
+        public House()
+        {
+            this.Id = Guid.NewGuid();
+        }
+
         [Key]
         public Guid Id { get; set; }
 

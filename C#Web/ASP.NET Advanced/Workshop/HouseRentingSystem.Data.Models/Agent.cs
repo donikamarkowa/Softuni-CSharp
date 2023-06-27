@@ -8,6 +8,7 @@
         public Agent()
         {
             this.OwnedHouses = new HashSet<House>();
+            this.Id = Guid.NewGuid();
         }
 
         [Key]
