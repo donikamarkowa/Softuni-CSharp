@@ -9,9 +9,9 @@
     {
         /// <summary>
         /// This method registers all services with their interfaces and implementations of given assembly.
-        /// The assembly is taken from the type of random service implementation provided.
+        /// The assembly is taken from the type of random service interface implementation provided.
         /// </summary>
-        /// <param name="serviceType">Type of random service implementation.</param>
+        /// <param name="serviceType"></param>
         /// <exception cref="InvalidOperationException"></exception>
         public static void AddApplicationServices(this IServiceCollection services, Type serviceType)
         {
