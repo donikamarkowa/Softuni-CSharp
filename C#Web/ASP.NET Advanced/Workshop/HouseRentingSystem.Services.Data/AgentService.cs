@@ -32,7 +32,7 @@
             return result;  
         }
 
-        public Task Create(string userId, BecomeAgentFormModel model)
+        public async Task Create(string userId, BecomeAgentFormModel model)
         {
             Agent newAgent = new Agent()
             {
@@ -40,7 +40,8 @@
                 UserId = Guid.Parse(userId)
             };
 
-            this.dbContext.Agents.AddAsync(newAgent);
+            await this.dbContext.Agents.AddAsync(newAgent);
+            await this.dbContext.SaveChangesAsync();    
         }
 
         public async Task<bool> HasRentsByUserIdAsync(string userId)
