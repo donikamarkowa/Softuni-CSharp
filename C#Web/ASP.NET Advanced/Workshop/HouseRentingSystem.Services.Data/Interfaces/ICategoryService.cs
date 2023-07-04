@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HouseRentingSystem.Services.Data.Interfaces
+﻿namespace HouseRentingSystem.Services.Data.Interfaces
 {
-    internal interface ICategoryService
+    using HouseRentingSystem.Web.ViewModels.Category;
+    public interface ICategoryService
     {
+        Task<IEnumerable<HouseSelectCategoryFormModel>> AllCategoriesAsync();
     }
 }
