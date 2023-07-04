@@ -13,15 +13,17 @@
     {
         private readonly ICategoryService categoryService;
         private readonly IAgentService agentService;
-        public HouseController(ICategoryService categoryService, IAgentService agentService)
+        private readonly IHouseService houseService;
+        public HouseController(ICategoryService categoryService, IAgentService agentService, IHouseService houseService)
         {
             this.categoryService = categoryService;
             this.agentService = agentService;
+            this.houseService = houseService;
         }
         [AllowAnonymous]
         public async Task<IActionResult> All()
         {
-            return View();
+            return this.Ok();
         }
 
         [HttpGet]
@@ -61,12 +63,27 @@
                 ModelState.AddModelError(nameof(model.CategoryId), "Selected category does not exist!");
             }
 
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
                 model.Categories = await this.categoryService.AllCategoriesAsync();
 
                 return View(model);
             }
+
+            try
+            {
+                string? agentId = await this.agentService.GetAgentIdByUserIdAsync(this.User.GetId()!);
+                this.houseService.CreateAsync(model, agentId!);
+            }
+            catch (Exception)
+            {
+                this.ModelState.AddModelError(String.Empty, "Unexpected error occurred while trying to add your new house! Please try again later or contact administrator!");
+
+                model.Categories = await this.categoryService.AllCategoriesAsync();
+                return this.View(model);
+            }
+
+            return this.RedirectToAction("All", "House");
         }
     }
 }
