@@ -42,5 +42,31 @@
 
             return View(formModel); 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(HouseFormModel model)
+        {
+            bool isAgent = await this.agentService.AgentsExistByUserIdAsync(this.User.GetId()!);
+            if (!isAgent)
+            {
+                this.TempData[ErrorMessage] = "You must become an agent in order to add new houses!";
+
+                return RedirectToAction("Become", "Agent");
+            }
+
+            bool categoryExists = await this.categoryService.ExistByIdAsync(model.CategoryId);
+            if (!categoryExists)
+            {
+                //Adding model error to ModelState automatically makes ModelState Invalid
+                ModelState.AddModelError(nameof(model.CategoryId), "Selected category does not exist!");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.Categories = await this.categoryService.AllCategoriesAsync();
+
+                return View(model);
+            }
+        }
     }
 }
