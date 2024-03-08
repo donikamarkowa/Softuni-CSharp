@@ -1,2 +1,2 @@
 # Softuni-CSharp
-All of my SoftUni homework, exercises and projects.
+All of my SoftUni homeworks, exercises and projects.
